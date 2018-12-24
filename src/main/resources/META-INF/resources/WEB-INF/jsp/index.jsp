@@ -9,16 +9,24 @@
     <link href="${bootstrapCss}" type="text/css" rel="stylesheet"/>
 </head>
 
-<form:form method="post" action="/">
-<div class="container">
-    <h1 class="display-3">Markov Chain Application</h1>
-    <p>This is a good UI.</p>
-    <input type="submit" class="btn btn-primary"
-           value="This will do something eventually">
+<form:form method="post" action="/" modelAttribute="inputModel">
+    <div class="container">
+        <h1 class="display-3">Markov Chain Application</h1>
+        <p>Enter text below to submit values for Markov chain generation</p>
 
-    <c:if test="${message != null}">
-        <h1><c:out value="${message}"/></h1>
-    </c:if>
-</div>
+        <div class="form-group">
+            <spring:bind path="textInput">
+                <form:input path="textInput" class="form-control" id="textInput"
+                            placeholder="Enter text in me!"/>
+            </spring:bind>
+        </div>
+        <input type="submit" class="btn btn-primary"
+               value="Submit new input">
+
+        <c:if test="${message != null}">
+            <h1><c:out value="${message}"/></h1>
+        </c:if>
+    </div>
+
 
 </form:form>
