@@ -29,28 +29,32 @@ public class MarkovChainServiceImpl implements MarkovChainService {
     private void initialiseInputValues(final String input) {
         if (listContainsAFullStop(input)) {
             splitSentences(input).forEach(s -> {
-                final List<String> spaceDelimited = List.of(s.split(" "));
+                final List<String> spaceDelimited = immutableListOf(s.split(" "));
                 IntStream.range(0, spaceDelimited.size())
                         .forEachOrdered(i -> {
                             final String currentWord = spaceDelimited.get(i);
-                            Optional.ofNullable(words.get(currentWord))
-                                    .ifPresentOrElse(set -> {
-                                                if (i + 1 != spaceDelimited.size()) {
-                                                    set.add(spaceDelimited.get(i + 1));
-                                                } else {
-                                                    set.add(".");
-                                                }
-                                            },
-                                            () -> {
-                                                if (i + 1 != spaceDelimited.size()) {
-                                                    words.put(currentWord, immutableSetOf(spaceDelimited.get(i + 1)));
-                                                } else {
-                                                    words.put(currentWord, immutableSetOf("."));
-                                                }
-                                            });
+                            final Optional<Set<String>> strings = Optional.ofNullable(words.get(currentWord));
+                            if (strings.isPresent()){
+                                final Set<String> set = strings.get();
+                                if (i + 1 != spaceDelimited.size()) {
+                                    set.add(spaceDelimited.get(i + 1));
+                                } else {
+                                    set.add(".");
+                                }
+                            } else {
+                                if (i + 1 != spaceDelimited.size()) {
+                                    words.put(currentWord, immutableSetOf(spaceDelimited.get(i + 1)));
+                                } else {
+                                    words.put(currentWord, immutableSetOf("."));
+                                }
+                            }
                         });
             });
         }
+    }
+
+    private List<String> immutableListOf(final String[] values){
+        return Stream.of(values).collect(Collectors.toList());
     }
 
     private Set<String> immutableSetOf(final String firstValue) {
@@ -59,7 +63,7 @@ public class MarkovChainServiceImpl implements MarkovChainService {
 
     private List<String> splitSentences(final String input) {
         return Stream.of(input.split("\\."))
-                .map(String::strip)
+                .map(String::trim)
                 .collect(Collectors.toList());
     }
 }
