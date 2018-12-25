@@ -46,4 +46,10 @@ public class IndexController {
         return "redirect:/";
     }
 
+    @GetMapping("/clear")
+    public String clear(){
+        markovChainService.clearEntries();
+        return "redirect:/";
+    }
+
 }

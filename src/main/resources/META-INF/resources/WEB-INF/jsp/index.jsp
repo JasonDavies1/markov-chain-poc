@@ -40,6 +40,8 @@
                     </tr>
                 </c:forEach>
             </table>
+
+            <a href="/clear" class="btn btn-danger">Clear entries</a>
         </c:if>
     </div>
 </form:form>
