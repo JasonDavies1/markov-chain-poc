@@ -20,26 +20,31 @@
                             placeholder="Enter text in me!"/>
             </spring:bind>
         </div>
-        <input type="submit" class="btn btn-primary"
-               value="Submit new input">
+
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary"
+                   value="Submit new input">
+        </div>
 
         <c:if test="${message != null}">
             <h1><c:out value="${message}"/></h1>
         </c:if>
 
         <c:if test="${nodeRelationships != null}">
-            <table class="table table-striped" id="nodes">
-                <tr>
-                    <th>Key</th>
-                    <th>Known values</th>
-                </tr>
-                <c:forEach items="${nodeRelationships}" var="node">
+            <div class="form-group">
+                <table class="table table-striped" id="nodes">
                     <tr>
-                        <td>${node.key}</td>
-                        <td>${node.value}</td>
+                        <th>Key</th>
+                        <th>Known values</th>
                     </tr>
-                </c:forEach>
-            </table>
+                    <c:forEach items="${nodeRelationships}" var="node">
+                        <tr>
+                            <td>${node.key}</td>
+                            <td>${node.value}</td>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </div>
 
             <a href="/clear" class="btn btn-danger">Clear entries</a>
         </c:if>
