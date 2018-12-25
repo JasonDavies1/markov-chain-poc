@@ -41,8 +41,12 @@ public class IndexController {
         final Map<String, String> nodeRelationships
                 = markovCollectionInterpreter.interpretRelationships(relationships);
 
-        redirectAttributes.addFlashAttribute("nodeRelationships", nodeRelationships);
-        redirectAttributes.addFlashAttribute("message", "Redirection successful, message read: " + inputModel.getTextInput());
+        if (!nodeRelationships.isEmpty()) {
+            redirectAttributes.addFlashAttribute("nodeRelationships", nodeRelationships);
+        } else {
+            redirectAttributes.addFlashAttribute("message", "No value entered!");
+        }
+
         return "redirect:/";
     }
 

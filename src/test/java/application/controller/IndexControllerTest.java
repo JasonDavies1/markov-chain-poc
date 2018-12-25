@@ -34,10 +34,12 @@ public class IndexControllerTest {
     }
 
     @Test
-    public void postMappingRedirectsToIndexWithMessage() {
+    public void postMappingRedirectsToIndexWithIndexedEntriesIfAnyExist() {
         inputModel.setTextInput("Test");
         final HashMap<String, Set<String>> nodeRelationshipMap = new HashMap<>();
         final HashMap<String, String> interpretedRelationships = new HashMap<>();
+        interpretedRelationships.put("Apples", "Bananas");
+
         given(markovChainService.addInput(any()))
                 .willReturn(nodeRelationshipMap);
         given(markovCollectionInterpreter.interpretRelationships(nodeRelationshipMap))
@@ -53,9 +55,45 @@ public class IndexControllerTest {
                 .interpretRelationships(nodeRelationshipMap);
         then(redirectAttributes)
                 .should()
-                .addFlashAttribute(eq("message"), eq("Redirection successful, message read: " + inputModel.getTextInput()));
+                .addFlashAttribute(eq("nodeRelationships"), eq(interpretedRelationships));
         assertThat(result)
                 .isEqualTo("redirect:/");
     }
 
+    @Test
+    public void postMappingRedirectsToIndexWithErrorMessageIfNoInput() {
+        inputModel.setTextInput("Test");
+        final HashMap<String, Set<String>> nodeRelationshipMap = new HashMap<>();
+        final HashMap<String, String> interpretedRelationships = new HashMap<>();
+
+        given(markovChainService.addInput(any()))
+                .willReturn(nodeRelationshipMap);
+        given(markovCollectionInterpreter.interpretRelationships(nodeRelationshipMap))
+                .willReturn(interpretedRelationships);
+
+        final String result = target.post(redirectAttributes, inputModel);
+
+        then(markovChainService)
+                .should()
+                .addInput(inputModel.getTextInput());
+        then(markovCollectionInterpreter)
+                .should()
+                .interpretRelationships(nodeRelationshipMap);
+        then(redirectAttributes)
+                .should()
+                .addFlashAttribute(eq("message"), eq("No value entered!"));
+        assertThat(result)
+                .isEqualTo("redirect:/");
+    }
+
+    @Test
+    public void clearMappingRedirectsBackToIndexPage(){
+        final String result = target.clear();
+
+        then(markovChainService)
+                .should()
+                .clearEntries();
+        assertThat(result)
+                .isEqualTo("redirect:/");
+    }
 }
