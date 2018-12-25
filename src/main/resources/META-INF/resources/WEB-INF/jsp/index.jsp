@@ -26,7 +26,20 @@
         <c:if test="${message != null}">
             <h1><c:out value="${message}"/></h1>
         </c:if>
+
+        <c:if test="${nodeRelationships != null}">
+            <table class="table table-striped" id="nodes">
+                <tr>
+                    <th>Key</th>
+                    <th>Known values</th>
+                </tr>
+                <c:forEach items="${nodeRelationships}" var="node">
+                    <tr>
+                        <td>${node.key}</td>
+                        <td>${node.value}</td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
     </div>
-
-
 </form:form>
