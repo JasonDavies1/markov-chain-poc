@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static application.util.CollectionInstantiator.immutableListOf;
+import static application.util.CollectionInstantiator.immutableSetOf;
+
 @Service
 public class MarkovChainServiceImpl implements MarkovChainService {
 
@@ -21,7 +24,7 @@ public class MarkovChainServiceImpl implements MarkovChainService {
 
     @Override
     public HashMap<String, Set<String>> addInput(@NonNull @NotEmpty final String input) {
-        if (listDoesNotHaveFullStopAtTheEnd(input)){
+        if (listDoesNotHaveFullStopAtTheEnd(input)) {
             final String formattedInput = input.trim() + ".";
             initialiseInputValues(formattedInput);
         } else {
@@ -41,7 +44,7 @@ public class MarkovChainServiceImpl implements MarkovChainService {
 
         final AtomicReference<Double> probability = new AtomicReference<>(1.00);
 
-        if (listDoesNotHaveFullStopAtTheEnd(input)){
+        if (listDoesNotHaveFullStopAtTheEnd(input)) {
             final String formattedInput = input.trim() + ".";
             return getProbabilityValue(split, probability, formattedInput);
         } else {
@@ -49,9 +52,10 @@ public class MarkovChainServiceImpl implements MarkovChainService {
         }
     }
 
-    private String getProbabilityValue(final List<String> split,
-                                       final AtomicReference<Double> probability,
-                                       final String formattedInput) {
+    private String getProbabilityValue(
+            final List<String> split,
+            final AtomicReference<Double> probability,
+            final String formattedInput) {
         final Optional<String> terminatorStringFound = getTerminatorString(formattedInput);
         if (terminatorStringFound.isPresent()) {
             for (int i = 0; i < split.size() - 1; i++) {
@@ -60,7 +64,7 @@ public class MarkovChainServiceImpl implements MarkovChainService {
                     probability.set(probability.get() * (1.00 / strings.get().size()));
                 } else {
                     probability.set(0.00);
-                    i=split.size();
+                    i = split.size();
                 }
             }
 
@@ -82,14 +86,14 @@ public class MarkovChainServiceImpl implements MarkovChainService {
 
     private Optional<String> getTerminatorString(final String formattedInput) {
         final List<String> strings = splitInput(formattedInput);
-        final String terminatorString = strings.get(strings.size()-1);
-        final String formattedTerminator = terminatorString.substring(0, terminatorString.length()-1);
+        final String terminatorString = strings.get(strings.size() - 1);
+        final String formattedTerminator = terminatorString.substring(0, terminatorString.length() - 1);
         return findTerminatingValues().stream()
                 .filter(s -> s.equals(formattedTerminator))
                 .findFirst();
     }
 
-    private Set<String> findTerminatingValues(){
+    private Set<String> findTerminatingValues() {
         return words.entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().stream().anyMatch(s -> s.equals(".")))
@@ -104,7 +108,7 @@ public class MarkovChainServiceImpl implements MarkovChainService {
                     .forEachOrdered(i -> {
                         final String currentWord = spaceDelimited.get(i);
                         final Optional<Set<String>> strings = Optional.ofNullable(words.get(currentWord));
-                        if (strings.isPresent()){
+                        if (strings.isPresent()) {
                             final Set<String> set = strings.get();
                             if (i + 1 != spaceDelimited.size()) {
                                 set.add(spaceDelimited.get(i + 1));
@@ -124,14 +128,6 @@ public class MarkovChainServiceImpl implements MarkovChainService {
 
     private List<String> splitInput(String s) {
         return immutableListOf(s.split(" "));
-    }
-
-    private List<String> immutableListOf(final String[] values){
-        return Stream.of(values).collect(Collectors.toList());
-    }
-
-    private Set<String> immutableSetOf(final String firstValue) {
-        return Stream.of(firstValue).collect(Collectors.toSet());
     }
 
     private List<String> splitSentences(final String input) {
