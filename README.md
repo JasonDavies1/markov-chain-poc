@@ -28,18 +28,3 @@ now has two paths it can take:
 
     p = .5 * 1 = .5
     p*100 = 50.
-
-# Note
-I'm curious as to whether of not I'm approaching this in the correct manner. Currently, nodes can have a maximum of 
-one relationship with another node of the same value. Thus, given the three inputs below:
-
-    I said hey. 
-    I said hello.
-    I shouted hi. 
-    
-Within the application the key value pairing for relationships would only permit 1 relationship between "I" and "said" 
-even though there's a 66.667% chance of the word "said" being used. The application would therefore lower this 
-probability to 50% as "I" only knows about "said" and "shouted" - completely discounting for the frequency that the 
-values are distributed. 
-
-I however do know how I can resolve this easily and may look to change it soon. 
