@@ -28,6 +28,12 @@ public class IndexControllerTest {
             markovCollectionInterpreter);
 
     @Test
+    public void modelAttributeForInputModelExists(){
+        assertThat(target.inputModel())
+                .isNotNull();
+    }
+
+    @Test
     public void canAccessLandingPage() {
         assertThat(target.get())
                 .isEqualTo("index");
