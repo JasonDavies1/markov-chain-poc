@@ -9,12 +9,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MarkovCollectionInterpreterTest {
 
-    private Map<String, Set<String>> entries = new HashMap<>();
+    private Map<String, List<String>> entries = new HashMap<>();
     private MarkovCollectionInterpreter target = new MarkovCollectionInterpreter();
 
     @Test
-    public void canInterpretOneKeyWithOneValue(){
-        entries.put("Apple", Collections.singleton("Banana"));
+    public void canInterpretOneKeyWithOneValue() {
+        entries.put("Apple", Collections.singletonList("Banana"));
 
         final Map<String, String> result = target.interpretRelationships(entries);
 
@@ -28,8 +28,8 @@ public class MarkovCollectionInterpreterTest {
     }
 
     @Test
-    public void canInterpretOneKeyWithTwoValues(){
-        entries.put("Apple", setOf("Banana", "Cabbage"));
+    public void canInterpretOneKeyWithTwoValues() {
+        entries.put("Apple", listOf("Banana", "Cabbage"));
 
         final Map<String, String> result = target.interpretRelationships(entries);
 
@@ -43,8 +43,8 @@ public class MarkovCollectionInterpreterTest {
     }
 
     @Test
-    public void canInterpretOneKeyWithThreeValues(){
-        entries.put("Apple", setOf("Banana", "Cabbage", "Duck"));
+    public void canInterpretOneKeyWithThreeValues() {
+        entries.put("Apple", listOf("Banana", "Cabbage", "Duck"));
 
         final Map<String, String> result = target.interpretRelationships(entries);
 
@@ -57,10 +57,10 @@ public class MarkovCollectionInterpreterTest {
                 });
     }
 
-    private Set<String> setOf(String... values){
+    private List<String> listOf(String... values) {
         return Arrays.stream(values)
                 .sorted(Collections.reverseOrder())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
 }

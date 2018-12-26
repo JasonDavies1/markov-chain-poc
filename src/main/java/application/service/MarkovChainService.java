@@ -1,11 +1,11 @@
 package application.service;
 
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 public interface MarkovChainService {
 
-    HashMap<String, Set<String>> addInput(String input);
+    HashMap<String, List<String>> addInput(String input);
 
     void clearEntries();
 

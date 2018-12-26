@@ -3,7 +3,7 @@ package application.service;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -20,14 +20,14 @@ public class MarkovChainServiceImplTest {
 
     @Test
     public void canInitialiseWithASingleSentence_AndNoRepeatingWords() {
-        final HashMap<String, Set<String>> result = target.addInput("This is a new sentence.");
+        final HashMap<String, List<String>> result = target.addInput("This is a new sentence.");
 
         thenKeySetShouldContainNumberOfValues(result, 5);
     }
 
     @Test
     public void canInitialiseWithTwoSentences_AndNoRepeatingWords() {
-        final HashMap<String, Set<String>> result =
+        final HashMap<String, List<String>> result =
                 target.addInput("This is the first sentence. Bananas are cool.");
 
         thenKeySetShouldContainNumberOfValues(result, 8);
@@ -35,7 +35,7 @@ public class MarkovChainServiceImplTest {
 
     @Test
     public void canInitialiseWithOneSentence_WithARepeatingWord() {
-        final HashMap<String, Set<String>> result =
+        final HashMap<String, List<String>> result =
                 target.addInput("This is my cool sentence with lots and lots of repetition.");
 
         thenKeySetShouldContainNumberOfValues(result, 10);
@@ -43,7 +43,7 @@ public class MarkovChainServiceImplTest {
 
     @Test
     public void canInitialiseWithTwoSentences_WithARepeatingWord() {
-        final HashMap<String, Set<String>> result =
+        final HashMap<String, List<String>> result =
                 target.addInput("This is one sentence. This is another sentence.");
 
         thenKeySetShouldContainNumberOfValues(result, 5);
@@ -52,7 +52,7 @@ public class MarkovChainServiceImplTest {
     @Test
     public void canAddTwoUniqueInputs() {
         target.addInput("One.");
-        HashMap<String, Set<String>> result = target.addInput("Two.");
+        final HashMap<String, List<String>> result = target.addInput("Two.");
 
         thenKeySetShouldContainNumberOfValues(result, 2);
     }
@@ -85,25 +85,25 @@ public class MarkovChainServiceImplTest {
     }
 
     @Test
-    public void multipleInputsCanAffectProbability_FiftyPercentChance() {
+    public void multipleInputsCanAffectProbability_ThirtyThreePercentChance_TestOne() {
         target.addInput("I said hey.");
         target.addInput("I said hello.");
         target.addInput("I shouted hi.");
 
         final String result = target.determineProbability("I shouted hi.");
 
-        thenProbabilityShouldBe(result, "0.5");
+        thenProbabilityShouldBe(result, "0.3333333333333333");
     }
 
     @Test
-    public void multipleInputsCanAffectProbability_TwentyFivePercentChance() {
+    public void multipleInputsCanAffectProbability_TwentyFivePercentChance_TestTwo() {
         target.addInput("I said hey.");
         target.addInput("I said hello.");
         target.addInput("I shouted hi.");
 
         final String result = target.determineProbability("I said hello.");
 
-        thenProbabilityShouldBe(result, "0.25");
+        thenProbabilityShouldBe(result, "0.3333333333333333");
     }
 
     private void thenProbabilityShouldBeZero(
@@ -120,7 +120,7 @@ public class MarkovChainServiceImplTest {
     }
 
     private void thenKeySetShouldContainNumberOfValues(
-            final HashMap<String, Set<String>> result,
+            final HashMap<String, List<String>> result,
             final int i) {
         assertThat(result.keySet())
                 .hasSize(i);

@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -28,7 +28,7 @@ public class IndexControllerTest {
             markovCollectionInterpreter);
 
     @Test
-    public void modelAttributeForInputModelExists(){
+    public void modelAttributeForInputModelExists() {
         assertThat(target.inputModel())
                 .isNotNull();
     }
@@ -42,7 +42,7 @@ public class IndexControllerTest {
     @Test
     public void postMappingRedirectsToIndexWithIndexedEntriesIfAnyExist() {
         inputModel.setTextInput("Test");
-        final HashMap<String, Set<String>> nodeRelationshipMap = new HashMap<>();
+        final HashMap<String, List<String>> nodeRelationshipMap = new HashMap<>();
         final HashMap<String, String> interpretedRelationships = new HashMap<>();
         interpretedRelationships.put("Apples", "Bananas");
 
@@ -69,7 +69,7 @@ public class IndexControllerTest {
     @Test
     public void postMappingRedirectsToIndexWithErrorMessageIfNoInput() {
         inputModel.setTextInput("Test");
-        final HashMap<String, Set<String>> nodeRelationshipMap = new HashMap<>();
+        final HashMap<String, List<String>> nodeRelationshipMap = new HashMap<>();
         final HashMap<String, String> interpretedRelationships = new HashMap<>();
 
         given(markovChainService.addInput(any()))
@@ -93,7 +93,7 @@ public class IndexControllerTest {
     }
 
     @Test
-    public void clearMappingRedirectsBackToIndexPage(){
+    public void clearMappingRedirectsBackToIndexPage() {
         final String result = target.clear();
 
         then(markovChainService)

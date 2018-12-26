@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class IndexController {
     private final MarkovCollectionInterpreter markovCollectionInterpreter;
 
     @ModelAttribute("inputModel")
-    public InputModel inputModel(){
+    public InputModel inputModel() {
         return new InputModel();
     }
 
@@ -34,9 +34,9 @@ public class IndexController {
     @PostMapping("/")
     public String post(
             final RedirectAttributes redirectAttributes,
-            final InputModel inputModel){
+            final InputModel inputModel) {
 
-        final HashMap<String, Set<String>> relationships
+        final HashMap<String, List<String>> relationships
                 = markovChainService.addInput(inputModel.getTextInput());
         final Map<String, String> nodeRelationships
                 = markovCollectionInterpreter.interpretRelationships(relationships);
@@ -51,7 +51,7 @@ public class IndexController {
     }
 
     @GetMapping("/clear")
-    public String clear(){
+    public String clear() {
         markovChainService.clearEntries();
         return "redirect:/";
     }

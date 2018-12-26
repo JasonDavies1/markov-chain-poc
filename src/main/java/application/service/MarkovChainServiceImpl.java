@@ -11,19 +11,18 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static application.util.CollectionInstantiator.immutableListOf;
-import static application.util.CollectionInstantiator.immutableSetOf;
 
 @Service
 public class MarkovChainServiceImpl implements MarkovChainService {
 
-    private final HashMap<String, Set<String>> words = new HashMap<>();
+    private final HashMap<String, List<String>> words = new HashMap<>();
 
     private boolean listDoesNotHaveFullStopAtTheEnd(final String input) {
         return !input.contains(".") || input.charAt(input.length() - 1) != '.';
     }
 
     @Override
-    public HashMap<String, Set<String>> addInput(@NonNull @NotEmpty final String input) {
+    public HashMap<String, List<String>> addInput(@NonNull @NotEmpty final String input) {
         if (listDoesNotHaveFullStopAtTheEnd(input)) {
             final String formattedInput = input.trim() + ".";
             initialiseInputValues(formattedInput);
@@ -59,9 +58,9 @@ public class MarkovChainServiceImpl implements MarkovChainService {
         final Optional<String> terminatorStringFound = getTerminatorString(formattedInput);
         if (terminatorStringFound.isPresent()) {
             for (int i = 0; i < split.size() - 1; i++) {
-                final Optional<Set<String>> strings = Optional.ofNullable(words.get(split.get(i)));
+                final Optional<List<String>> strings = Optional.ofNullable(words.get(split.get(i)));
                 if (strings.isPresent()) {
-                    probability.set(probability.get() * (1.00 / strings.get().size()));
+                    probability.set(probability.get() * (getNumberOfOccurencesForNextWord(strings.get(), split.get(i + 1)) / strings.get().size()));
                 } else {
                     probability.set(0.00);
                     i = split.size();
@@ -69,10 +68,10 @@ public class MarkovChainServiceImpl implements MarkovChainService {
             }
 
             if (probability.get() > 0.00) {
-                final Optional<Set<String>> terminatorValueOptional =
+                final Optional<List<String>> terminatorValueOptional =
                         Optional.ofNullable(words.get(terminatorStringFound.get()));
                 if (terminatorValueOptional.isPresent()) {
-                    probability.set(probability.get() * (1.00 / terminatorValueOptional.get().size()));
+                    probability.set(probability.get() * (getNumberOfOccurencesForNextWord(terminatorValueOptional.get(), ".") / terminatorValueOptional.get().size()));
                 } else {
                     probability.set(0.00);
                 }
@@ -82,6 +81,13 @@ public class MarkovChainServiceImpl implements MarkovChainService {
         }
 
         return "Probability: " + probability.get();
+    }
+
+    private Double getNumberOfOccurencesForNextWord(final List<String> values, final String nextWord) {
+        final String nextWordFormatted = !nextWord.equals(".") ? nextWord.replaceAll("\\.", "") : nextWord;
+        return (double) values.stream()
+                .filter(s -> s.equals(nextWordFormatted))
+                .count();
     }
 
     private Optional<String> getTerminatorString(final String formattedInput) {
@@ -107,9 +113,9 @@ public class MarkovChainServiceImpl implements MarkovChainService {
             IntStream.range(0, spaceDelimited.size())
                     .forEachOrdered(i -> {
                         final String currentWord = spaceDelimited.get(i);
-                        final Optional<Set<String>> strings = Optional.ofNullable(words.get(currentWord));
+                        final Optional<List<String>> strings = Optional.ofNullable(words.get(currentWord));
                         if (strings.isPresent()) {
-                            final Set<String> set = strings.get();
+                            final List<String> set = strings.get();
                             if (i + 1 != spaceDelimited.size()) {
                                 set.add(spaceDelimited.get(i + 1));
                             } else {
@@ -117,9 +123,9 @@ public class MarkovChainServiceImpl implements MarkovChainService {
                             }
                         } else {
                             if (i + 1 != spaceDelimited.size()) {
-                                words.put(currentWord, immutableSetOf(spaceDelimited.get(i + 1)));
+                                words.put(currentWord, immutableListOf(spaceDelimited.get(i + 1)));
                             } else {
-                                words.put(currentWord, immutableSetOf("."));
+                                words.put(currentWord, immutableListOf("."));
                             }
                         }
                     });
